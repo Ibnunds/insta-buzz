@@ -5,9 +5,15 @@ function delay(timeout) {
   return new Promise((resolve) => setTimeout(resolve, timeout));
 }
 
-async function createInstaPost(acc) {
+async function createInstaPost(acc, post) {
   // acc
   const { id, pw } = acc;
+
+  // post
+  const { image, caption } = post;
+  const path = "./data/post/";
+
+  const imagePath = path + image;
 
   // puppeteer
   const browser = await openBrowser();
@@ -45,7 +51,7 @@ async function createInstaPost(acc) {
     let fileInputs = await page.$$('input[type="file"]');
     let input = fileInputs[fileInputs.length - 1];
 
-    await input.uploadFile("./data/post/0.jpeg");
+    await input.uploadFile(imagePath);
 
     await delay(1500);
 
@@ -74,7 +80,7 @@ async function createInstaPost(acc) {
     await page.click('div[aria-label="Write a caption..."]');
 
     // Type
-    await page.keyboard.type("Ini caption saya", { delay: 50 });
+    await page.keyboard.type(caption, { delay: 50 });
 
     // Get the share button and click it
     await page.waitForXPath("//div[contains(text(),'Share')]");
@@ -114,12 +120,25 @@ async function createInstaPost(acc) {
       return link;
     });
 
-    await page.goto("https://www.instagram.com" + postLink);
+    //await page.goto("https://www.instagram.com" + postLink);
 
-    console.log(postLink);
+    console.log(
+      `${id} success created post ` + "https://www.instagram.com" + postLink
+    );
+
+    await browser.close();
+
+    return {
+      status: "OK",
+      postUrl: "https://www.instagram.com" + postLink,
+    };
   } catch (error) {
     await browser.close();
     console.log(error);
+    return {
+      status: "ERROR",
+      postUrl: "",
+    };
   }
 }
 

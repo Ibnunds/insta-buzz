@@ -26,7 +26,6 @@ const runCommentBot = async () => {
 
 const runPostBot = async () => {
   const POST = pickRandomElement(POST_LIST);
-  console.log(POST);
   await createInstaPost(ACC_LIST[0], POST);
 };
 
