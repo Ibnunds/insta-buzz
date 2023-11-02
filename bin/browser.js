@@ -1,11 +1,10 @@
-const puppeteer = require("puppeteer-core");
+const puppeteer = require("puppeteer");
 
 // Initiate the browser
 const openBrowser = async () => {
   const browser = await puppeteer.launch({
-    headless: false,
-    executablePath:
-      "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    args: ["--lang=en-US,en", "--no-sandbox", "--disable-setuid-sandbox"],
+    headless: "new",
   });
 
   return browser;
