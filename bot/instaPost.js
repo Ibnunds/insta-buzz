@@ -148,6 +148,7 @@ async function createInstaPost(acc, post) {
     return {
       status: "OK",
       postUrl: "https://www.instagram.com" + postLink,
+      acc: id,
     };
   } catch (error) {
     await browser.close();
@@ -155,6 +156,7 @@ async function createInstaPost(acc, post) {
     return {
       status: "ERROR",
       postUrl: error,
+      acc: id,
     };
   }
 }
