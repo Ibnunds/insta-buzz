@@ -12,7 +12,7 @@ const reportIG = (data, type) => {
 };
 
 function buatReport(data, type) {
-  const date = new Date().toISOString();
+  const date = new Date().toISOString().replace(/\:/g, "-").replace(/\./g, "-");
   fs.writeFile(
     `./report/report-${type}-${date}.json`,
     JSON.stringify(data, null, 4),
