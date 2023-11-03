@@ -1,5 +1,7 @@
 const ProgressBar = require("../bin/bar");
 const openBrowser = require("../bin/browser");
+const { pickRandomElement } = require("../bin/utils");
+const POST_LIST = require("../data/post.json");
 
 function delay(timeout) {
   return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -7,12 +9,14 @@ function delay(timeout) {
 
 const Bar = new ProgressBar();
 
-async function createInstaPost(acc, post) {
+async function createInstaPost(acc) {
   Bar.init(100);
   // acc
   const { id, pw } = acc;
 
   // post
+  const post = pickRandomElement(POST_LIST);
+
   const { image, caption } = post;
   const path = "./data/post/";
 
