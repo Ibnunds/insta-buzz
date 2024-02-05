@@ -53,6 +53,15 @@ async function createInstaPost(acc) {
 
     await page.waitForNavigation();
 
+    await page.waitForSelector('div[role="dialog"]');
+
+    // Wait for the next button
+    await page.waitForXPath("//button[contains(text(),'Not Now')]");
+
+    // Get the next button
+    let notnow = await page.$x("//div[contains(text(),'Next')]");
+    await notnow[0].click();
+
     Bar.update(20);
 
     await page.waitForSelector('svg[aria-label="New post"]');
