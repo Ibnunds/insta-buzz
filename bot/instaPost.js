@@ -71,14 +71,9 @@ async function createInstaPost(acc) {
     await page.waitForSelector('div[role="dialog"]');
 
     // Wait for the next button
-    await page.waitForXPath("//button[contains(text(),'Not Now')]");
-
-    // Get the next button
-    let notnow = await page.$x("//button[contains(text(),'Not Now')]");
-
-    // If "Not Now" button is found, click it
-    if (notnow.length > 0) {
-      await notnow[0].click();
+    try {
+      await page.waitForXPath("//button[contains(text(),'Not Now')]");
+    } catch (error) {
       Bar.update(20);
 
       await page.waitForSelector('svg[aria-label="New post"]');
@@ -180,8 +175,14 @@ async function createInstaPost(acc) {
         postUrl: "https://www.instagram.com" + postLink,
         acc: id,
       };
-    } else {
-      console.log("Dialog or 'Not Now' button not found.");
+    }
+
+    // Get the next button
+    let notnow = await page.$x("//button[contains(text(),'Not Now')]");
+
+    // If "Not Now" button is found, click it
+    if (notnow.length > 0) {
+      await notnow[0].click();
       Bar.update(20);
 
       await page.waitForSelector('svg[aria-label="New post"]');
