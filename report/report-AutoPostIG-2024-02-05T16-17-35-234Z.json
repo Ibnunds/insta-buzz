@@ -1,5 +1,0 @@
-[
-    "ERROR -> [CindyAlvianingrum75 : TimeoutError: Waiting for selector `svg[aria-label=\"New post\"]` failed: Waiting failed: 30000ms exceeded]",
-    "ERROR -> [InnekeArdina74 : TimeoutError: Waiting for selector `input[type='file']` failed: Waiting failed: 30000ms exceeded]",
-    "ERROR -> [DenyRais12 : Error: Navigating frame was detached]"
-]

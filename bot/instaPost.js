@@ -282,9 +282,9 @@ async function createInstaPost(acc) {
     Bar.update(20);
 
     try {
-      await existingUser(page);
+      return await existingUser(page);
     } catch (error) {
-      await newUser(page);
+      return await newUser(page);
     }
   } catch (error) {
     await browser.close();
