@@ -7,6 +7,21 @@ function delay(timeout) {
   return new Promise((resolve) => setTimeout(resolve, timeout));
 }
 
+async function isPopUp(page) {
+  await page.waitForSelector('div[role="dialog"]');
+  let element = await page.$(".br");
+  let value = await page.evaluate((el) => el.textContent, element);
+
+  console.log("Delayed -> " + value);
+
+  if (!value.toLowerCase().includes("ready")) {
+    await delay(30000);
+    await isReady(page);
+  } else {
+    return;
+  }
+}
+
 const Bar = new ProgressBar();
 
 async function createInstaPost(acc) {
@@ -59,110 +74,216 @@ async function createInstaPost(acc) {
     await page.waitForXPath("//button[contains(text(),'Not Now')]");
 
     // Get the next button
-    let notnow = await page.$x("//div[contains(text(),'Next')]");
-    await notnow[0].click();
+    let notnow = await page.$x("//button[contains(text(),'Not Now')]");
 
-    Bar.update(20);
+    // If "Not Now" button is found, click it
+    if (notnow.length > 0) {
+      await notnow[0].click();
+      Bar.update(20);
 
-    await page.waitForSelector('svg[aria-label="New post"]');
+      await page.waitForSelector('svg[aria-label="New post"]');
 
-    await page.click('svg[aria-label="New post"]');
+      await page.click('svg[aria-label="New post"]');
 
-    await page.waitForSelector('div[role="dialog"]');
+      await page.waitForSelector('div[role="dialog"]');
 
-    Bar.update(30);
+      Bar.update(30);
 
-    // Wait until everything is loaded
-    await page.waitForSelector("input[type='file']");
+      // Wait until everything is loaded
+      await page.waitForSelector("input[type='file']");
 
-    // Set the value for the correct file input (last on the page is new post)
-    let fileInputs = await page.$$('input[type="file"]');
-    let input = fileInputs[fileInputs.length - 1];
+      // Set the value for the correct file input (last on the page is new post)
+      let fileInputs = await page.$$('input[type="file"]');
+      let input = fileInputs[fileInputs.length - 1];
 
-    await input.uploadFile(imagePath);
+      await input.uploadFile(imagePath);
 
-    await delay(1500);
+      await delay(1500);
 
-    Bar.update(40);
+      Bar.update(40);
 
-    // Wait for the next button
-    await page.waitForXPath("//div[contains(text(),'Next')]");
+      // Wait for the next button
+      await page.waitForXPath("//div[contains(text(),'Next')]");
 
-    // Get the next button
-    let next = await page.$x("//div[contains(text(),'Next')]");
-    await next[0].click();
+      // Get the next button
+      let next = await page.$x("//div[contains(text(),'Next')]");
+      await next[0].click();
 
-    Bar.update(50);
+      Bar.update(50);
 
-    // Wait for the next button
-    await page.waitForXPath("//div[contains(text(),'Next')]");
+      // Wait for the next button
+      await page.waitForXPath("//div[contains(text(),'Next')]");
 
-    // Get the next button
-    let nextt = await page.$x("//div[contains(text(),'Next')]");
-    await nextt[0].click();
+      // Get the next button
+      let nextt = await page.$x("//div[contains(text(),'Next')]");
+      await nextt[0].click();
 
-    Bar.update(60);
+      Bar.update(60);
 
-    await page.waitForSelector('div[aria-label="Write a caption..."]');
+      await page.waitForSelector('div[aria-label="Write a caption..."]');
 
-    await page.click('div[aria-label="Write a caption..."]');
+      await page.click('div[aria-label="Write a caption..."]');
 
-    // Type
-    await page.keyboard.type(caption, { delay: 50 });
+      // Type
+      await page.keyboard.type(caption, { delay: 50 });
 
-    Bar.update(70);
+      Bar.update(70);
 
-    // Get the share button and click it
-    await page.waitForXPath("//div[contains(text(),'Share')]");
-    let share = await page.$x("//div[contains(text(),'Share')]");
+      // Get the share button and click it
+      await page.waitForXPath("//div[contains(text(),'Share')]");
+      let share = await page.$x("//div[contains(text(),'Share')]");
 
-    await share[0].click();
+      await share[0].click();
 
-    await delay(2000);
+      await delay(2000);
 
-    Bar.update(80);
+      Bar.update(80);
 
-    await page.waitForXPath(
-      "//span[contains(text(),'Your post has been shared.')]"
-    );
+      await page.waitForXPath(
+        "//span[contains(text(),'Your post has been shared.')]"
+      );
 
-    await page.click('svg[aria-label="Close"]');
+      await page.click('svg[aria-label="Close"]');
 
-    await page.waitForXPath("//img[contains(@alt,'profile picture')]");
+      await page.waitForXPath("//img[contains(@alt,'profile picture')]");
 
-    let profile = await page.$x("//img[contains(@alt,'profile picture')]");
+      let profile = await page.$x("//img[contains(@alt,'profile picture')]");
 
-    await profile[0].click();
+      await profile[0].click();
 
-    await delay(1000);
+      await delay(1000);
 
-    Bar.update(90);
+      Bar.update(90);
 
-    await page.waitForSelector("div._aabd._aa8k._al3l");
+      await page.waitForSelector("div._aabd._aa8k._al3l");
 
-    const postLink = await page.evaluate(async () => {
-      const list = document.querySelectorAll("div._aabd._aa8k._al3l");
+      const postLink = await page.evaluate(async () => {
+        const list = document.querySelectorAll("div._aabd._aa8k._al3l");
 
-      const link = list[0].querySelector("a").getAttribute("href");
+        const link = list[0].querySelector("a").getAttribute("href");
 
-      return link;
-    });
+        return link;
+      });
 
-    //await page.goto("https://www.instagram.com" + postLink);
+      //await page.goto("https://www.instagram.com" + postLink);
 
-    // console.log(
-    //   `${id} success created post ` + "https://www.instagram.com" + postLink
-    // );
+      // console.log(
+      //   `${id} success created post ` + "https://www.instagram.com" + postLink
+      // );
 
-    Bar.update(100);
+      Bar.update(100);
 
-    await browser.close();
+      await browser.close();
 
-    return {
-      status: "OK",
-      postUrl: "https://www.instagram.com" + postLink,
-      acc: id,
-    };
+      return {
+        status: "OK",
+        postUrl: "https://www.instagram.com" + postLink,
+        acc: id,
+      };
+    } else {
+      console.log("Dialog or 'Not Now' button not found.");
+      Bar.update(20);
+
+      await page.waitForSelector('svg[aria-label="New post"]');
+
+      await page.click('svg[aria-label="New post"]');
+
+      await page.waitForSelector('div[role="dialog"]');
+
+      Bar.update(30);
+
+      // Wait until everything is loaded
+      await page.waitForSelector("input[type='file']");
+
+      // Set the value for the correct file input (last on the page is new post)
+      let fileInputs = await page.$$('input[type="file"]');
+      let input = fileInputs[fileInputs.length - 1];
+
+      await input.uploadFile(imagePath);
+
+      await delay(1500);
+
+      Bar.update(40);
+
+      // Wait for the next button
+      await page.waitForXPath("//div[contains(text(),'Next')]");
+
+      // Get the next button
+      let next = await page.$x("//div[contains(text(),'Next')]");
+      await next[0].click();
+
+      Bar.update(50);
+
+      // Wait for the next button
+      await page.waitForXPath("//div[contains(text(),'Next')]");
+
+      // Get the next button
+      let nextt = await page.$x("//div[contains(text(),'Next')]");
+      await nextt[0].click();
+
+      Bar.update(60);
+
+      await page.waitForSelector('div[aria-label="Write a caption..."]');
+
+      await page.click('div[aria-label="Write a caption..."]');
+
+      // Type
+      await page.keyboard.type(caption, { delay: 50 });
+
+      Bar.update(70);
+
+      // Get the share button and click it
+      await page.waitForXPath("//div[contains(text(),'Share')]");
+      let share = await page.$x("//div[contains(text(),'Share')]");
+
+      await share[0].click();
+
+      await delay(2000);
+
+      Bar.update(80);
+
+      await page.waitForXPath(
+        "//span[contains(text(),'Your post has been shared.')]"
+      );
+
+      await page.click('svg[aria-label="Close"]');
+
+      await page.waitForXPath("//img[contains(@alt,'profile picture')]");
+
+      let profile = await page.$x("//img[contains(@alt,'profile picture')]");
+
+      await profile[0].click();
+
+      await delay(1000);
+
+      Bar.update(90);
+
+      await page.waitForSelector("div._aabd._aa8k._al3l");
+
+      const postLink = await page.evaluate(async () => {
+        const list = document.querySelectorAll("div._aabd._aa8k._al3l");
+
+        const link = list[0].querySelector("a").getAttribute("href");
+
+        return link;
+      });
+
+      //await page.goto("https://www.instagram.com" + postLink);
+
+      // console.log(
+      //   `${id} success created post ` + "https://www.instagram.com" + postLink
+      // );
+
+      Bar.update(100);
+
+      await browser.close();
+
+      return {
+        status: "OK",
+        postUrl: "https://www.instagram.com" + postLink,
+        acc: id,
+      };
+    }
   } catch (error) {
     await browser.close();
     console.log(error);
